@@ -64,23 +64,34 @@ class Bootstrap_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The plugins list offers a Settings link next to Deactivate.
+	 * The plugins list offers Settings and View Logs next to Deactivate.
+	 *
+	 * Each link must open the tab its label promises: sending "View Logs" to
+	 * the settings tab would be worse than not offering it.
 	 *
 	 * @return void
 	 */
-	public function test_plugins_list_offers_a_settings_link(): void {
+	public function test_plugins_list_offers_settings_and_view_logs(): void {
 		$plugin = Plugin::instance();
 		$plugin->init();
 
 		$this->assertNotFalse(
-			\has_filter( 'plugin_action_links_' . SILVER_ASSIST_CLOUDWATCH_BASENAME, [ $plugin, 'add_settings_link' ] )
+			\has_filter( 'plugin_action_links_' . SILVER_ASSIST_CLOUDWATCH_BASENAME, [ $plugin, 'add_action_links' ] )
 		);
 
-		$links = $plugin->add_settings_link( [ 'deactivate' => '<a href="#">Deactivate</a>' ] );
+		$links = $plugin->add_action_links( [ 'deactivate' => '<a href="#">Deactivate</a>' ] );
 
-		$this->assertStringContainsString( 'page=' . AdminPage::PAGE_SLUG, $links[0] );
+		$this->assertCount( 3, $links, 'The existing links must be kept.' );
+
 		$this->assertStringContainsString( 'Settings', $links[0] );
-		$this->assertCount( 2, $links, 'The existing links must be kept.' );
+		$this->assertStringContainsString( 'tab=settings', \html_entity_decode( $links[0] ) );
+
+		$this->assertStringContainsString( 'View Logs', $links[1] );
+		$this->assertStringContainsString( 'tab=logs', \html_entity_decode( $links[1] ) );
+
+		foreach ( [ $links[0], $links[1] ] as $link ) {
+			$this->assertStringContainsString( 'page=' . AdminPage::PAGE_SLUG, \html_entity_decode( $link ) );
+		}
 	}
 
 	/**

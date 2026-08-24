@@ -70,28 +70,48 @@ final class Plugin extends AbstractPlugin {
 	 * @since 1.0.0
 	 */
 	protected function init_hooks(): void {
-		\add_filter( 'plugin_action_links_' . SILVER_ASSIST_CLOUDWATCH_BASENAME, [ $this, 'add_settings_link' ] );
+		\add_filter( 'plugin_action_links_' . SILVER_ASSIST_CLOUDWATCH_BASENAME, [ $this, 'add_action_links' ] );
 
 		$this->init_updater();
 	}
 
 	/**
-	 * Put a Settings link on the plugin's row in the plugins list.
+	 * Put Settings and View Logs on the plugin's row in the plugins list.
+	 *
+	 * Both point at the plugin's single admin page, each opening the tab its
+	 * label promises, so neither link lands the reader on the wrong one.
 	 *
 	 * @param array<int|string, string> $links Existing action links.
-	 * @return array<int|string, string> The links, with Settings first.
+	 * @return array<int|string, string> The links, with this plugin's first.
 	 * @since 1.0.2
 	 */
-	public function add_settings_link( array $links ): array {
-		$settings_link = \sprintf(
-			'<a href="%s">%s</a>',
-			\esc_url( \admin_url( 'admin.php?page=' . AdminPage::PAGE_SLUG ) ),
-			\esc_html__( 'Settings', 'silver-assist-cloudwatch-logs' )
+	public function add_action_links( array $links ): array {
+		$own = [
+			$this->build_action_link( 'settings', \__( 'Settings', 'silver-assist-cloudwatch-logs' ) ),
+			$this->build_action_link( 'logs', \__( 'View Logs', 'silver-assist-cloudwatch-logs' ) ),
+		];
+
+		return \array_merge( $own, $links );
+	}
+
+	/**
+	 * Build one link to a tab of the plugin's admin page.
+	 *
+	 * @param string $tab   Tab identifier.
+	 * @param string $label Link text.
+	 * @return string The anchor markup.
+	 * @since 1.0.2
+	 */
+	private function build_action_link( string $tab, string $label ): string {
+		$url = \add_query_arg(
+			[
+				'page' => AdminPage::PAGE_SLUG,
+				'tab'  => $tab,
+			],
+			\admin_url( 'admin.php' )
 		);
 
-		\array_unshift( $links, $settings_link );
-
-		return $links;
+		return \sprintf( '<a href="%s">%s</a>', \esc_url( $url ), \esc_html( $label ) );
 	}
 
 	/**

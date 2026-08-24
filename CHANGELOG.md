@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Check Updates** button on the plugin's Settings Hub card, matching the other
   Silver Assist plugins. It appears only when the GitHub update channel actually
   initialised, so a card without it is a signal in itself.
-- **Settings** link on the plugin's row in the plugins list, next to Deactivate.
+- **Settings** and **View Logs** links on the plugin's row in the plugins list,
+  next to Deactivate. Each opens the tab its label promises.
 
 ## [1.0.1] - 2026-08-24
 
