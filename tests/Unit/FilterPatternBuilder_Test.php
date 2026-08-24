@@ -86,6 +86,26 @@ class FilterPatternBuilder_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Error messages are not HTML-escaped at the throw site.
+	 *
+	 * They are sent as JSON and rendered with textContent, or escaped by the
+	 * view that prints them. Escaping here too shows the reader &quot; instead
+	 * of a quotation mark, which is what 1.0.0 and 1.0.1 did.
+	 *
+	 * @return void
+	 */
+	public function test_messages_are_not_pre_escaped(): void {
+		try {
+			FilterPatternBuilder::build( '50% done', 'regex' );
+			$this->fail( 'A regex containing the delimiter must be rejected.' );
+		} catch ( InvalidArgumentException $e ) {
+			$this->assertStringNotContainsString( '&quot;', $e->getMessage() );
+			$this->assertStringNotContainsString( '&amp;', $e->getMessage() );
+			$this->assertStringNotContainsString( '&#0', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * A regex cannot contain the delimiter CloudWatch uses.
 	 *
 	 * @return void

@@ -68,7 +68,7 @@ class FilterPatternBuilder {
 
 		if ( ! \in_array( $mode, self::MODES, true ) ) {
 			throw new InvalidArgumentException(
-				\esc_html__( 'Unknown search mode.', 'silver-assist-cloudwatch-logs' )
+				\__( 'Unknown search mode.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
@@ -113,13 +113,13 @@ class FilterPatternBuilder {
 
 		if ( '' === $term ) {
 			throw new InvalidArgumentException(
-				\esc_html__( 'Enter a regular expression to search for.', 'silver-assist-cloudwatch-logs' )
+				\__( 'Enter a regular expression to search for.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
 		if ( \str_contains( $term, '%' ) ) {
 			throw new InvalidArgumentException(
-				\esc_html__( 'A regular expression cannot contain a percent sign; CloudWatch uses it as the delimiter.', 'silver-assist-cloudwatch-logs' )
+				\__( 'A regular expression cannot contain a percent sign; CloudWatch uses it as the delimiter.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
@@ -140,12 +140,10 @@ class FilterPatternBuilder {
 		}
 
 		throw new InvalidArgumentException(
-			\esc_html(
-				\sprintf(
+			\sprintf(
 					/* translators: %d: the maximum number of characters. */
-					\__( 'The search is too long; CloudWatch accepts at most %d characters.', 'silver-assist-cloudwatch-logs' ),
-					self::MAX_LENGTH
-				)
+				\__( 'The search is too long; CloudWatch accepts at most %d characters.', 'silver-assist-cloudwatch-logs' ),
+				self::MAX_LENGTH
 			)
 		);
 	}
@@ -166,12 +164,10 @@ class FilterPatternBuilder {
 		}
 
 		throw new InvalidArgumentException(
-			\esc_html(
-				\sprintf(
+			\sprintf(
 					/* translators: %d: the maximum number of regular expressions. */
-					\__( 'CloudWatch accepts at most %d regular expressions in one filter pattern.', 'silver-assist-cloudwatch-logs' ),
-					self::MAX_REGEX_COUNT
-				)
+				\__( 'CloudWatch accepts at most %d regular expressions in one filter pattern.', 'silver-assist-cloudwatch-logs' ),
+				self::MAX_REGEX_COUNT
 			)
 		);
 	}

@@ -120,7 +120,7 @@ class CredentialsResolver {
 		if ( '' === $secret ) {
 			if ( $this->settings->has_unreadable_secret_access_key() ) {
 				throw new RuntimeException(
-					\esc_html__(
+					\__(
 						'The stored secret access key can no longer be decrypted. This happens when the site security salts change; re-enter the key to fix it.',
 						'silver-assist-cloudwatch-logs'
 					)
@@ -132,7 +132,7 @@ class CredentialsResolver {
 
 		if ( '' === $key || '' === $secret ) {
 			throw new RuntimeException(
-				\esc_html__(
+				\__(
 					'Enter both an access key ID and a secret access key, or switch to another authentication mode.',
 					'silver-assist-cloudwatch-logs'
 				)
@@ -156,7 +156,7 @@ class CredentialsResolver {
 
 		if ( '' === $secret_id ) {
 			throw new RuntimeException(
-				\esc_html__( 'Enter the name or ARN of the Secrets Manager secret holding the AWS credentials.', 'silver-assist-cloudwatch-logs' )
+				\__( 'Enter the name or ARN of the Secrets Manager secret holding the AWS credentials.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
@@ -182,15 +182,12 @@ class CredentialsResolver {
 			);
 		} catch ( AwsException $e ) {
 			throw new RuntimeException(
-				\esc_html(
-					\sprintf(
+				\sprintf(
 						/* translators: %s: the error message returned by AWS. */
-						\__( 'Could not read the Secrets Manager secret: %s', 'silver-assist-cloudwatch-logs' ),
-						$e->getAwsErrorMessage() ?? $e->getMessage()
-					)
+					\__( 'Could not read the Secrets Manager secret: %s', 'silver-assist-cloudwatch-logs' ),
+					$e->getAwsErrorMessage() ?? $e->getMessage()
 				),
 				0,
-				// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Chained as the previous exception, never rendered.
 				$e
 			);
 		}
@@ -200,7 +197,7 @@ class CredentialsResolver {
 
 		if ( ! \is_array( $decoded ) ) {
 			throw new RuntimeException(
-				\esc_html__( 'The Secrets Manager secret does not contain JSON.', 'silver-assist-cloudwatch-logs' )
+				\__( 'The Secrets Manager secret does not contain JSON.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
@@ -210,7 +207,7 @@ class CredentialsResolver {
 
 		if ( '' === $key || '' === $secret ) {
 			throw new RuntimeException(
-				\esc_html__(
+				\__(
 					'The Secrets Manager secret must contain "accessKeyId" and "secretAccessKey" fields.',
 					'silver-assist-cloudwatch-logs'
 				)
@@ -252,7 +249,7 @@ class CredentialsResolver {
 		}
 
 		throw new RuntimeException(
-			\esc_html__( 'The Secrets Manager secret is empty.', 'silver-assist-cloudwatch-logs' )
+			\__( 'The Secrets Manager secret is empty.', 'silver-assist-cloudwatch-logs' )
 		);
 	}
 

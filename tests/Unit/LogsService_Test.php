@@ -149,6 +149,39 @@ class LogsService_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * AWS messages reach the browser unescaped, ready for textContent.
+	 *
+	 * The reported symptom was a viewer showing
+	 * `Error executing &quot;FilterLogEvents&quot; on &quot;https://...&quot;`
+	 * because the message was escaped before it was ever rendered.
+	 *
+	 * @return void
+	 */
+	public function test_error_messages_are_not_pre_escaped(): void {
+		$handler = new MockHandler();
+		$handler->append(
+			static function ( CommandInterface $cmd ): AwsException {
+				return new AwsException(
+					'Boom',
+					$cmd,
+					[
+						'code'    => 'InvalidParameterException',
+						'message' => 'Error executing "FilterLogEvents" on "https://logs.us-east-1.amazonaws.com/"',
+					]
+				);
+			}
+		);
+
+		try {
+			$this->service_with( $handler )->search( $this->query() );
+			$this->fail( 'The rejected search must raise.' );
+		} catch ( RuntimeException $e ) {
+			$this->assertStringNotContainsString( '&quot;', $e->getMessage() );
+			$this->assertStringContainsString( '"FilterLogEvents"', $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Throttling explains the account-wide quota rather than blaming the user.
 	 *
 	 * @return void

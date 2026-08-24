@@ -63,8 +63,7 @@ class LogsService {
 		try {
 			$result = $this->clients->make_logs_client()->filterLogEvents( $query->to_api_args() );
 		} catch ( AwsException $e ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Chained as the previous exception, never rendered.
-			throw new RuntimeException( \esc_html( $this->explain( $e ) ), 0, $e );
+			throw new RuntimeException( $this->explain( $e ), 0, $e );
 		}
 
 		$events = [];

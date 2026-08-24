@@ -70,7 +70,7 @@ final class LogQuery {
 	public static function from_input( array $input, string $log_group, int $limit ): self {
 		if ( '' === $log_group ) {
 			throw new InvalidArgumentException(
-				\esc_html__( 'No log group is configured.', 'silver-assist-cloudwatch-logs' )
+				\__( 'No log group is configured.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
@@ -134,13 +134,13 @@ final class LogQuery {
 
 		if ( $start_ms <= 0 || $end_ms <= 0 ) {
 			throw new InvalidArgumentException(
-				\esc_html__( 'Enter both a start and an end for a custom range.', 'silver-assist-cloudwatch-logs' )
+				\__( 'Enter both a start and an end for a custom range.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
 		if ( $start_ms >= $end_ms ) {
 			throw new InvalidArgumentException(
-				\esc_html__( 'The start of the range must come before its end.', 'silver-assist-cloudwatch-logs' )
+				\__( 'The start of the range must come before its end.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 

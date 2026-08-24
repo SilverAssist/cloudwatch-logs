@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Settings** and **View Logs** links on the plugin's row in the plugins list,
   next to Deactivate. Each opens the tab its label promises.
 
+### Fixed
+
+- **Error messages showed HTML entities**, for example
+  `Error executing &quot;FilterLogEvents&quot; on &quot;https://…&quot;`. The
+  messages were escaped where the exception was raised, then escaped again — or
+  rendered as plain text — where they were displayed. They now carry no markup
+  escaping: the viewer renders them with `textContent` and the status card
+  escapes them on output, which is where escaping belongs.
+
 ## [1.0.1] - 2026-08-24
 
 ### Fixed

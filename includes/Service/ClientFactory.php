@@ -108,7 +108,7 @@ class ClientFactory {
 
 		if ( '' === $region ) {
 			throw new RuntimeException(
-				\esc_html__( 'Select an AWS region before connecting.', 'silver-assist-cloudwatch-logs' )
+				\__( 'Select an AWS region before connecting.', 'silver-assist-cloudwatch-logs' )
 			);
 		}
 
@@ -155,7 +155,7 @@ class ClientFactory {
 		}
 
 		throw new RuntimeException(
-			\esc_html__(
+			\__(
 				'The AWS SDK for PHP is not available. Reinstall the plugin from its release package, or run "composer install" in the plugin directory.',
 				'silver-assist-cloudwatch-logs'
 			)
