@@ -1,0 +1,568 @@
+# Copyright (C) 2026 Silver Assist
+# This file is distributed under the PolyForm-Noncommercial-1.0.0.
+msgid ""
+msgstr ""
+"Project-Id-Version: Silver Assist CloudWatch Logs 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloudwatch-logs\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-08-24T16:37:26+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: silver-assist-cloudwatch-logs\n"
+
+#. Plugin Name of the plugin
+#: silver-assist-cloudwatch-logs.php
+msgid "Silver Assist CloudWatch Logs"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: silver-assist-cloudwatch-logs.php
+msgid "https://github.com/SilverAssist/cloudwatch-logs"
+msgstr ""
+
+#. Description of the plugin
+#: silver-assist-cloudwatch-logs.php
+msgid "View, search and follow the events of an Amazon CloudWatch Logs log group from the WordPress admin."
+msgstr ""
+
+#. Author of the plugin
+#: silver-assist-cloudwatch-logs.php
+msgid "Silver Assist"
+msgstr ""
+
+#. Author URI of the plugin
+#: silver-assist-cloudwatch-logs.php
+msgid "https://silverassist.com"
+msgstr ""
+
+#: includes/Admin/AdminPage.php:133
+#: includes/Admin/AdminPage.php:134
+#: includes/Admin/AdminPage.php:146
+#: includes/Admin/AdminPage.php:151
+#: includes/Admin/AdminPage.php:204
+msgid "CloudWatch Logs"
+msgstr ""
+
+#: includes/Admin/AdminPage.php:149
+msgid "Read, search and follow an Amazon CloudWatch Logs group without leaving WordPress."
+msgstr ""
+
+#: includes/Admin/AdminPage.php:169
+msgid "You are not allowed to change these settings."
+msgstr ""
+
+#: includes/Admin/AdminPage.php:177
+msgid "Security check failed. Reload the page and try again."
+msgstr ""
+
+#: includes/Admin/AdminPage.php:185
+msgid "Settings saved."
+msgstr ""
+
+#: includes/Admin/AdminPage.php:206
+msgid "CloudWatch Logs sections"
+msgstr ""
+
+#: includes/Admin/AdminPage.php:209
+msgid "Logs"
+msgstr ""
+
+#: includes/Admin/AdminPage.php:213
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/Ajax/ConnectionAjaxHandler.php:117
+#: includes/Admin/Ajax/ConnectionAjaxHandler.php:159
+#: includes/Admin/Ajax/LogsAjaxHandler.php:117
+msgid "Security check failed."
+msgstr ""
+
+#: includes/Admin/Ajax/ConnectionAjaxHandler.php:124
+msgid "Slow down a moment before testing again."
+msgstr ""
+
+#: includes/Admin/Ajax/ConnectionAjaxHandler.php:138
+msgid "Connected to CloudWatch Logs."
+msgstr ""
+
+#: includes/Admin/Ajax/ConnectionAjaxHandler.php:166
+msgid "Slow down a moment before searching again."
+msgstr ""
+
+#: includes/Admin/Ajax/LogsAjaxHandler.php:128
+msgid "Slow down a moment; CloudWatch limits how often it can be searched."
+msgstr ""
+
+#: includes/Admin/AssetManager.php:133
+msgid "Validating…"
+msgstr ""
+
+#: includes/Admin/AssetManager.php:134
+msgid "The request failed. Check that WordPress can reach admin-ajax.php."
+msgstr ""
+
+#. translators: %d: number of log events currently displayed.
+#: includes/Admin/AssetManager.php:136
+#, php-format
+msgid "%d events loaded"
+msgstr ""
+
+#: includes/Admin/AssetManager.php:137
+msgid "Tailing…"
+msgstr ""
+
+#: includes/Admin/AssetManager.php:138
+msgid "CloudWatch is throttling requests; slowing the refresh down."
+msgstr ""
+
+#: includes/Admin/AssetManager.php:139
+msgid "Tail stopped after repeated errors."
+msgstr ""
+
+#: includes/Model/FilterPatternBuilder.php:71
+msgid "Unknown search mode."
+msgstr ""
+
+#: includes/Model/FilterPatternBuilder.php:116
+msgid "Enter a regular expression to search for."
+msgstr ""
+
+#: includes/Model/FilterPatternBuilder.php:122
+msgid "A regular expression cannot contain a percent sign; CloudWatch uses it as the delimiter."
+msgstr ""
+
+#. translators: %d: the maximum number of characters.
+#: includes/Model/FilterPatternBuilder.php:146
+#, php-format
+msgid "The search is too long; CloudWatch accepts at most %d characters."
+msgstr ""
+
+#. translators: %d: the maximum number of regular expressions.
+#: includes/Model/FilterPatternBuilder.php:172
+#, php-format
+msgid "CloudWatch accepts at most %d regular expressions in one filter pattern."
+msgstr ""
+
+#: includes/Model/LogQuery.php:73
+msgid "No log group is configured."
+msgstr ""
+
+#: includes/Model/LogQuery.php:137
+msgid "Enter both a start and an end for a custom range."
+msgstr ""
+
+#: includes/Model/LogQuery.php:143
+msgid "The start of the range must come before its end."
+msgstr ""
+
+#: includes/Service/ClientFactory.php:111
+msgid "Select an AWS region before connecting."
+msgstr ""
+
+#: includes/Service/ClientFactory.php:158
+msgid "The AWS SDK for PHP is not available. Reinstall the plugin from its release package, or run \"composer install\" in the plugin directory."
+msgstr ""
+
+#: includes/Service/ConnectionTester.php:100
+msgid "Enter the name of the log group you want to read."
+msgstr ""
+
+#. translators: %s: the configured log group name.
+#: includes/Service/ConnectionTester.php:123
+#, php-format
+msgid "The credentials work, but no log group named \"%s\" was found in this region."
+msgstr ""
+
+#. translators: %s: the error message returned by AWS.
+#: includes/Service/ConnectionTester.php:273
+#, php-format
+msgid "Access denied. Grant logs:DescribeLogGroups, logs:DescribeLogStreams and logs:FilterLogEvents on this log group to the IAM identity in use. AWS said: %s"
+msgstr ""
+
+#. translators: %s: the error message returned by AWS.
+#: includes/Service/ConnectionTester.php:278
+#, php-format
+msgid "AWS rejected the credentials. Check the access key and secret, or the Secrets Manager secret. AWS said: %s"
+msgstr ""
+
+#. translators: %s: the error message returned by AWS.
+#: includes/Service/ConnectionTester.php:283
+#, php-format
+msgid "The log group does not exist in this region. AWS said: %s"
+msgstr ""
+
+#: includes/Service/ConnectionTester.php:286
+msgid "AWS is throttling requests for this account. Wait a moment and try again."
+msgstr ""
+
+#: includes/Service/CredentialsResolver.php:123
+msgid "The stored secret access key can no longer be decrypted. This happens when the site security salts change; re-enter the key to fix it."
+msgstr ""
+
+#: includes/Service/CredentialsResolver.php:135
+msgid "Enter both an access key ID and a secret access key, or switch to another authentication mode."
+msgstr ""
+
+#: includes/Service/CredentialsResolver.php:159
+msgid "Enter the name or ARN of the Secrets Manager secret holding the AWS credentials."
+msgstr ""
+
+#. translators: %s: the error message returned by AWS.
+#: includes/Service/CredentialsResolver.php:188
+#, php-format
+msgid "Could not read the Secrets Manager secret: %s"
+msgstr ""
+
+#: includes/Service/CredentialsResolver.php:203
+msgid "The Secrets Manager secret does not contain JSON."
+msgstr ""
+
+#: includes/Service/CredentialsResolver.php:213
+msgid "The Secrets Manager secret must contain \"accessKeyId\" and \"secretAccessKey\" fields."
+msgstr ""
+
+#: includes/Service/CredentialsResolver.php:255
+msgid "The Secrets Manager secret is empty."
+msgstr ""
+
+#. translators: %s: the error message returned by AWS.
+#: includes/Service/LogsService.php:100
+#, php-format
+msgid "Access denied. The IAM identity in use needs logs:FilterLogEvents on this log group. AWS said: %s"
+msgstr ""
+
+#: includes/Service/LogsService.php:103
+msgid "The log group no longer exists in this region."
+msgstr ""
+
+#. translators: %s: the error message returned by AWS.
+#: includes/Service/LogsService.php:109
+#, php-format
+msgid "CloudWatch rejected the search: %s"
+msgstr ""
+
+#: includes/Service/LogsService.php:112
+msgid "AWS is throttling requests for this account. CloudWatch allows five searches per second across the whole account; wait a moment and try again."
+msgstr ""
+
+#: includes/Service/SdkLoader.php:115
+msgid "Silver Assist CloudWatch Logs: the AWS SDK for PHP could not be loaded. Reinstall the plugin from its release package, or run \"composer install\" in the plugin directory."
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:35
+msgid "Time range"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:44
+msgid "Custom range"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:49
+msgid "Start"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:53
+msgid "End"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:59
+msgid "Search mode"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:62
+msgid "Text"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:63
+msgid "Regular expression"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:64
+msgid "Filter pattern"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:68
+#: includes/View/Admin/LogViewerView.php:74
+msgid "Search"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:71
+msgid "Search the log messages…"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:81
+msgid "Stream prefix"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:84
+msgid "Every stream"
+msgstr ""
+
+#. translators: %d: refresh interval in seconds.
+#: includes/View/Admin/LogViewerView.php:91
+#, php-format
+msgid "Tail (refresh every %ds)"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:102
+msgid "Export CSV"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:105
+msgid "Export JSON"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:110
+msgid "Text matches the words as typed. Regular expression uses the CloudWatch regex syntax. Filter pattern passes your input to CloudWatch untouched."
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:119
+msgid "Time"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:120
+msgid "Stream"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:121
+msgid "Message"
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:129
+msgid "No events matched this search."
+msgstr ""
+
+#: includes/View/Admin/LogViewerView.php:134
+msgid "Load more"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:42
+msgid "AWS configuration"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:53
+#: includes/View/Admin/StatusTableView.php:64
+msgid "Log group"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:55
+msgid "The exact CloudWatch Logs group name, for example /ecs/my-site."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:62
+#: includes/View/Admin/StatusTableView.php:65
+msgid "Region"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:64
+msgid "The AWS region the log group lives in."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:70
+msgid "Authentication"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:74
+msgid "Authentication mode"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:80
+msgid "Use the host IAM role"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:81
+msgid "No credentials are stored. Recommended when WordPress runs on ECS, EC2 or any host with an attached role."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:86
+msgid "Use an access key and secret"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:87
+msgid "The secret is encrypted before it is stored."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:92
+msgid "Read the credentials from AWS Secrets Manager"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:93
+msgid "A single secret name or ARN replaces the key fields."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:108
+msgid "Access key ID"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:124
+msgid "Secret name or ARN"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:126
+msgid "The secret must contain JSON with \"accessKeyId\" and \"secretAccessKey\" fields."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:133
+msgid "Viewer defaults"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:138
+msgid "Tail refresh interval"
+msgstr ""
+
+#. translators: %d: the shortest allowed interval, in seconds.
+#: includes/View/Admin/SettingsView.php:149
+#, php-format
+msgid "Seconds between refreshes while tailing. CloudWatch allows five searches per second across the whole AWS account, so the minimum is %d seconds."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:158
+msgid "Events per page"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:168
+msgid "Default time range"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:185
+msgid "Save settings"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:187
+msgid "Validate connection"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:239
+#: includes/View/Admin/SettingsView.php:274
+msgid "Defined in wp-config.php; edit it there."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:266
+msgid "Secret access key"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:277
+msgid "The stored key can no longer be decrypted, which happens when the site security salts change. Enter it again."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:280
+msgid "A key is stored. Leave this blank to keep it, or type a new one to replace it."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:282
+msgid "Encrypted before it is stored."
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:318
+msgid "Last 5 minutes"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:319
+msgid "Last 15 minutes"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:320
+msgid "Last hour"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:321
+msgid "Last 3 hours"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:322
+msgid "Last 12 hours"
+msgstr ""
+
+#: includes/View/Admin/SettingsView.php:323
+msgid "Last 24 hours"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:35
+msgid "Connection"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:39
+msgid "Connected"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:40
+msgid "Not connected"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:66
+msgid "Retention"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:67
+msgid "Stored size"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:68
+msgid "Latest stream"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:70
+msgid "No streams yet"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:71
+msgid "Last event"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:73
+msgid "Never"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:74
+msgid "IAM identity"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:76
+msgid "Not reported"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:77
+msgid "Auth mode"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:103
+msgid "Configure the log group and credentials below, then validate the connection."
+msgstr ""
+
+#. translators: %s: the AWS error code.
+#: includes/View/Admin/StatusTableView.php:114
+#, php-format
+msgid "AWS error code: %s"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:132
+msgid "Never expires"
+msgstr ""
+
+#. translators: %d: number of days.
+#: includes/View/Admin/StatusTableView.php:137
+#, php-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/View/Admin/StatusTableView.php:151
+msgid "Access key and secret"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:152
+msgid "AWS Secrets Manager"
+msgstr ""
+
+#: includes/View/Admin/StatusTableView.php:153
+msgid "Host IAM role"
+msgstr ""
+
+#: silver-assist-cloudwatch-logs.php:56
+msgid "Silver Assist CloudWatch Logs: missing or invalid Composer dependencies. Run \"composer install\"."
+msgstr ""

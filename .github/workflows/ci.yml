@@ -1,0 +1,83 @@
+name: CI
+permissions:
+  contents: read
+
+# Uses SilverAssist/wp-coding-standards@v1's reusable quality-checks.yml.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  quality-checks-82:
+    name: Quality Checks (PHP 8.2)
+    uses: SilverAssist/wp-coding-standards/.github/workflows/quality-checks.yml@v1
+    with:
+      php-version: "8.2"
+      skip-wp-setup: false
+      upload-coverage: false # this repo's phpunit run doesn't generate coverage.xml
+
+  quality-checks-83:
+    name: Quality Checks (PHP 8.3)
+    uses: SilverAssist/wp-coding-standards/.github/workflows/quality-checks.yml@v1
+    with:
+      php-version: "8.3"
+      skip-wp-setup: false
+      upload-coverage: false
+
+  quality-checks-84:
+    name: Quality Checks (PHP 8.4)
+    uses: SilverAssist/wp-coding-standards/.github/workflows/quality-checks.yml@v1
+    with:
+      php-version: "8.4"
+      skip-wp-setup: false
+      upload-coverage: false
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl
+          coverage: none
+      - run: composer install --no-interaction --no-progress --optimize-autoloader
+      - run: composer audit
+
+  compatibility:
+    name: WordPress Compatibility
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        wordpress-version: ["6.5", "6.6", "6.7", "latest"]
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, intl, mysql, pdo_mysql
+          coverage: none
+      - run: composer install --no-interaction --no-progress --optimize-autoloader
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq subversion
+      - run: bash scripts/install-wp-tests.sh wordpress_test root 'root' 127.0.0.1 ${{ matrix.wordpress-version }} false
+      - run: vendor/bin/phpunit

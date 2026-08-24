@@ -1,0 +1,107 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g. 1.2.0). Leave empty to use plugin file version.'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+        with:
+          php-version: '8.2'
+          tools: composer
+
+      - name: Setup Node.js
+        if: hashFiles('package.json') != ''
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Detect version
+        id: version
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          elif [[ -n "${{ github.event.inputs.version }}" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=$(grep -o 'Version: [0-9]\+\.[0-9]\+\.[0-9]\+' *.php 2>/dev/null | head -1 | cut -d' ' -f2)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "🏷️ Version: $VERSION"
+
+      - name: Install dependencies
+        run: composer install --no-interaction
+
+      - name: Install Node dependencies
+        if: hashFiles('package.json') != ''
+        run: npm ci
+
+      - name: Build assets
+        if: hashFiles('package.json') != ''
+        run: npm run build
+
+      - name: Update version
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if [ -f "scripts/update-version-simple.sh" ]; then
+            chmod +x scripts/update-version-simple.sh
+            ./scripts/update-version-simple.sh "$VERSION" --no-confirm --force
+          elif [ -f "scripts/update-version.sh" ]; then
+            chmod +x scripts/update-version.sh
+            ./scripts/update-version.sh "$VERSION" --no-confirm --force
+          fi
+
+      - name: Code quality
+        run: |
+          HAS_CHECKS=false
+          if [ -f phpcs.xml ] || [ -f .phpcs.xml.dist ] || [ -f phpcs.xml.dist ]; then
+            echo "▶ PHPCS"
+            vendor/bin/phpcs --runtime-set ignore_warnings_on_exit 1
+            HAS_CHECKS=true
+          fi
+          if [ -f phpstan.neon ] || [ -f phpstan.neon.dist ]; then
+            echo "▶ PHPStan"
+            vendor/bin/phpstan analyse --no-progress
+            HAS_CHECKS=true
+          fi
+          if [ "$HAS_CHECKS" = false ]; then
+            echo "ℹ️ No quality tool configs found — skipping"
+          fi
+
+      - name: Build release
+        id: build
+        run: |
+          chmod +x scripts/build-release.sh
+          ./scripts/build-release.sh "${{ steps.version.outputs.version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          files: |
+            build/*.zip
+            build/*.md5
+            build/*.sha256
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

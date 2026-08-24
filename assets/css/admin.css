@@ -1,0 +1,205 @@
+/**
+ * Silver Assist CloudWatch Logs - Admin styles
+ */
+
+.sacw-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+	gap: 20px;
+	margin-top: 20px;
+	align-items: start;
+}
+
+.sacw-admin .status-card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.sacw-admin .card-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 16px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.sacw-admin .card-header h3 {
+	margin: 0;
+	flex: 1;
+	font-size: 14px;
+}
+
+.sacw-admin .card-content {
+	padding: 8px 16px 16px;
+}
+
+.sacw-admin .status-indicator {
+	border-radius: 10px;
+	padding: 2px 10px;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.sacw-admin .status-indicator.active {
+	background: #edfaef;
+	color: #00713b;
+}
+
+.sacw-admin .status-indicator.inactive {
+	background: #fcf0f1;
+	color: #8a2424;
+}
+
+.sacw-status-table th {
+	width: 34%;
+	font-weight: 600;
+}
+
+.sacw-status-table td code {
+	background: transparent;
+	padding: 0;
+	word-break: break-all;
+}
+
+.sacw-status-error {
+	color: #8a2424;
+}
+
+.sacw-auth-choice {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.sacw-auth-choice .description {
+	display: block;
+	margin-left: 24px;
+}
+
+/* Only the fields for the selected authentication mode are shown. The server
+   emits the attribute for the non-selected modes so nothing flashes before the
+   script runs, and admin.js toggles it from there. */
+.sacw-auth-fields[hidden] {
+	display: none;
+}
+
+.sacw-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sacw-actions .sacw-spinner {
+	float: none;
+	margin: 0;
+}
+
+.sacw-actions .sacw-spinner.is-active {
+	visibility: visible;
+}
+
+.sacw-test-result:not(:empty) {
+	margin-top: 12px;
+}
+
+/* Log viewer */
+
+.sacw-toolbar {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 12px 16px;
+	margin: 16px 0;
+}
+
+.sacw-toolbar-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.sacw-toolbar-row:last-of-type {
+	margin-bottom: 0;
+}
+
+.sacw-toolbar-spacer {
+	flex: 1;
+}
+
+.sacw-toolbar .sacw-viewer-spinner {
+	float: none;
+	margin: 0;
+}
+
+.sacw-search-help {
+	margin: 4px 0 0;
+}
+
+.sacw-result-count {
+	color: #50575e;
+}
+
+.sacw-events {
+	table-layout: fixed;
+}
+
+.sacw-col-time {
+	width: 180px;
+}
+
+.sacw-col-stream {
+	width: 220px;
+	word-break: break-all;
+}
+
+.sacw-message {
+	margin: 0;
+	white-space: pre-wrap;
+	word-break: break-word;
+	font-size: 12px;
+	line-height: 1.5;
+	max-height: 320px;
+	overflow: auto;
+}
+
+.sacw-viewer-empty,
+.sacw-viewer-actions {
+	margin-top: 12px;
+}
+
+@media screen and (max-width: 782px) {
+	.sacw-col-time,
+	.sacw-col-stream {
+		width: auto;
+	}
+}
+
+.sacw-message mark {
+	background: #f0f6fc;
+	color: inherit;
+	font-weight: 600;
+	padding: 0 1px;
+}
+
+.sacw-message-summary {
+	cursor: pointer;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 12px;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.sacw-tail-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	white-space: nowrap;
+}
+
+.sacw-result-count.sacw-tailing {
+	color: #00713b;
+	font-weight: 600;
+}

@@ -1,0 +1,77 @@
+# Dependabot configuration for automated dependency updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Composer dependencies (PHP packages)
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Mexico_City"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "composer"
+      - "automated"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps"
+      include: "scope"
+    # Group minor and patch updates together
+    groups:
+      composer-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Critical packages - always create separate PRs for major updates
+    ignore:
+      # PHPUnit 10+ incompatible with WordPress Test Suite (WP_UnitTestCase)
+      # WordPress Test Suite requires PHPUnit 9.x
+      - dependency-name: "phpunit/phpunit"
+        update-types: ["version-update:semver-major"]
+      # PHPStan majors change rule behaviour; review before adopting
+      - dependency-name: "phpstan/phpstan"
+        update-types: ["version-update:semver-major"]
+      # AWS SDK ships releases almost daily; minor/patch are grouped weekly
+      # above, majors need a manual review of the CloudWatch Logs API surface
+      - dependency-name: "aws/aws-sdk-php"
+        update-types: ["version-update:semver-major"]
+      # Shared Silver Assist packages - manual review for major updates.
+      # A wp-plugin-kernel major can change the AbstractPlugin contract that
+      # Core\Plugin extends, so it must never land unattended.
+      - dependency-name: "silverassist/wp-plugin-kernel"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "silverassist/wp-settings-hub"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "silverassist/wp-github-updater"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:30"
+      timezone: "America/Mexico_City"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    # Group all GitHub Actions updates together
+    groups:
+      github-actions-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"

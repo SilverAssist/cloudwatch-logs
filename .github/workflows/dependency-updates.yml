@@ -1,0 +1,195 @@
+name: Dependency Updates Check
+
+on:
+  # Run every Monday at 9:00 AM Mexico City time
+  schedule:
+    - cron: '0 15 * * 1'  # 15:00 UTC = 9:00 AM Mexico City
+  
+  # Allow manual trigger
+  workflow_dispatch:
+  
+  # Run when Dependabot creates PRs
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  check-composer-updates:
+    name: 📦 Check Composer Dependencies
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      
+      - name: 🐘 Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, json
+          coverage: none
+      
+      - name: 📦 Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      
+      - name: 🔍 Check for Composer updates
+        id: composer-outdated
+        run: |
+          echo "Checking for outdated Composer packages..."
+          composer outdated --direct --format=json > composer-outdated.json || echo '{"installed":[]}' > composer-outdated.json
+          
+          # Check if there are outdated packages
+          OUTDATED_COUNT=$(jq '.installed | length' composer-outdated.json)
+          echo "outdated_count=$OUTDATED_COUNT" >> $GITHUB_OUTPUT
+          
+          if [ "$OUTDATED_COUNT" -gt 0 ]; then
+            echo "## 📦 Outdated Composer Packages" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Package | Current | Latest | Status |" >> $GITHUB_STEP_SUMMARY
+            echo "|---------|---------|--------|--------|" >> $GITHUB_STEP_SUMMARY
+            jq -r '.installed[] | "| \(.name) | \(.version) | \(.latest) | \(.["latest-status"]) |"' composer-outdated.json >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ All Composer packages are up to date!" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: � Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq subversion mysql-client
+      
+      - name: � Setup MySQL
+        run: |
+          sudo systemctl start mysql.service
+          mysql -e "DROP DATABASE IF EXISTS wordpress_test;" -uroot -proot || true
+          mysql -e "CREATE DATABASE wordpress_test;" -uroot -proot
+      
+      - name: 🐘 Install WordPress Test Suite
+        run: bash scripts/install-wp-tests.sh wordpress_test root 'root' localhost latest true
+      
+      - name: 🧪 Run Quality Checks
+        run: |
+          echo "## 🔍 Quality Checks" >> $GITHUB_STEP_SUMMARY
+          bash scripts/run-quality-checks.sh --skip-wp-setup all
+          echo "✅ All quality checks passed" >> $GITHUB_STEP_SUMMARY
+      
+      - name: 📤 Upload Composer outdated report
+        if: steps.composer-outdated.outputs.outdated_count > 0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: composer-outdated-report
+          path: composer-outdated.json
+          retention-days: 30
+
+  security-audit:
+    name: 🔒 Security Audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      
+      - name: 🐘 Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2.37.2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, json
+          coverage: none
+      
+      - name: 📦 Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      
+      - name: 🔒 Composer security audit
+        run: |
+          echo "## 🔒 Composer Security Audit" >> $GITHUB_STEP_SUMMARY
+          composer audit --format=json > composer-audit.json || true
+          
+          if [ -s composer-audit.json ]; then
+            VULNERABILITIES=$(jq '.advisories | length' composer-audit.json 2>/dev/null || echo "0")
+            if [ "$VULNERABILITIES" -gt 0 ]; then
+              echo "⚠️ Found $VULNERABILITIES security advisories" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### Details:" >> $GITHUB_STEP_SUMMARY
+              jq -r '.advisories | to_entries[] | "- **\(.key)**: \(.value[0].title) (CVE: \(.value[0].cve // "N/A"))"' composer-audit.json >> $GITHUB_STEP_SUMMARY || true
+            else
+              echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "✅ No security vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+          fi
+      
+      - name: 📤 Upload security report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: security-audit-report
+          path: composer-audit.json
+          retention-days: 90
+
+  auto-merge-dependabot:
+    name: 🤖 Auto-merge Dependabot PRs
+    needs: [check-composer-updates, security-audit]
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' && success()
+    
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: 📋 Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: ✅ Auto-approve PR
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 🔀 Enable auto-merge
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: ⚠️ Comment on major version updates
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## ⚠️ Major Version Update Detected
+              
+              This PR contains a **major version update** that may include breaking changes.
+              
+              **Manual review required** - Please review the changelog and test thoroughly before merging.
+              
+              **Package**: \`${{ steps.metadata.outputs.dependency-names }}\`
+              **Update**: \`${{ steps.metadata.outputs.previous-version }}\` → \`${{ steps.metadata.outputs.new-version }}\`
+              
+              ### Recommended Actions:
+              1. Review the package's CHANGELOG or release notes
+              2. Run full test suite locally
+              3. Check for breaking changes in documentation
+              4. Test plugin functionality in WordPress environment
+              5. Verify compatibility with PHP 8.2, 8.3, and 8.4`
+            });

@@ -1,0 +1,13 @@
+includes:
+	- vendor/silverassist/coding-standards/phpstan/base.neon
+	- vendor/silverassist/wp-coding-standards/phpstan/base.neon
+	- vendor/szepeviktor/phpstan-wordpress/extension.neon
+parameters:
+	paths:
+		- includes
+	bootstrapFiles:
+		- silver-assist-cloudwatch-logs.php
+	scanDirectories:
+		- vendor
+	excludePaths:
+		- build/*
