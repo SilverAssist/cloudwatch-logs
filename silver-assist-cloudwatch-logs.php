@@ -3,7 +3,7 @@
  * Plugin Name: Silver Assist CloudWatch Logs
  * Plugin URI: https://github.com/SilverAssist/cloudwatch-logs
  * Description: View, search and follow the events of an Amazon CloudWatch Logs log group from the WordPress admin.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Silver Assist
  * Author URI: https://silverassist.com
  * License: PolyForm-Noncommercial-1.0.0
@@ -20,14 +20,14 @@
  * @author Silver Assist
  * @license PolyForm-Noncommercial-1.0.0
  * @since 1.0.0
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 // Prevent direct access.
 \defined( 'ABSPATH' ) || exit;
 
 // Plugin constants.
-\define( 'SILVER_ASSIST_CLOUDWATCH_VERSION', '1.0.1' );
+\define( 'SILVER_ASSIST_CLOUDWATCH_VERSION', '1.0.2' );
 \define( 'SILVER_ASSIST_CLOUDWATCH_FILE', __FILE__ );
 \define( 'SILVER_ASSIST_CLOUDWATCH_PATH', \plugin_dir_path( __FILE__ ) );
 \define( 'SILVER_ASSIST_CLOUDWATCH_URL', \plugin_dir_url( __FILE__ ) );

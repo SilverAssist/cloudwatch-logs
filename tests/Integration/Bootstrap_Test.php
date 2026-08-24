@@ -10,6 +10,7 @@ namespace SilverAssist\CloudWatchLogs\Tests\Integration;
 
 use SilverAssist\CloudWatchLogs\Core\Activator;
 use SilverAssist\CloudWatchLogs\Core\Plugin;
+use SilverAssist\CloudWatchLogs\Admin\AdminPage;
 use SilverAssist\CloudWatchLogs\Core\Updater;
 use SilverAssist\PluginKernel\Interfaces\LoadableInterface;
 use SilverAssist\WpGithubUpdater\Updater as GitHubUpdater;
@@ -60,6 +61,37 @@ class Bootstrap_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( Plugin::class, $plugin );
 		$this->assertInstanceOf( LoadableInterface::class, $plugin );
 		$this->assertSame( $plugin, Plugin::instance() );
+	}
+
+	/**
+	 * The plugins list offers Settings and View Logs next to Deactivate.
+	 *
+	 * Each link must open the tab its label promises: sending "View Logs" to
+	 * the settings tab would be worse than not offering it.
+	 *
+	 * @return void
+	 */
+	public function test_plugins_list_offers_settings_and_view_logs(): void {
+		$plugin = Plugin::instance();
+		$plugin->init();
+
+		$this->assertNotFalse(
+			\has_filter( 'plugin_action_links_' . SILVER_ASSIST_CLOUDWATCH_BASENAME, [ $plugin, 'add_action_links' ] )
+		);
+
+		$links = $plugin->add_action_links( [ 'deactivate' => '<a href="#">Deactivate</a>' ] );
+
+		$this->assertCount( 3, $links, 'The existing links must be kept.' );
+
+		$this->assertStringContainsString( 'Settings', $links[0] );
+		$this->assertStringContainsString( 'tab=settings', \html_entity_decode( $links[0] ) );
+
+		$this->assertStringContainsString( 'View Logs', $links[1] );
+		$this->assertStringContainsString( 'tab=logs', \html_entity_decode( $links[1] ) );
+
+		foreach ( [ $links[0], $links[1] ] as $link ) {
+			$this->assertStringContainsString( 'page=' . AdminPage::PAGE_SLUG, \html_entity_decode( $link ) );
+		}
 	}
 
 	/**

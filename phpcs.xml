@@ -23,7 +23,14 @@
 	<!-- Check code for cross-version PHP compatibility. -->
 	<config name="testVersion" value="8.2-"/>
 
-	<rule ref="SilverAssistWP"/>
+	<rule ref="SilverAssistWP">
+		<!-- Exception messages in this plugin are never echoed. They travel to
+		     wp_send_json_error() as JSON and reach the browser through
+		     textContent, or through StatusTableView, which escapes at the point
+		     of output. Escaping them at the throw site double-encodes: the user
+		     sees &quot; instead of a quotation mark. Escape on output, not here. -->
+		<exclude name="WordPress.Security.EscapeOutput.ExceptionNotEscaped"/>
+	</rule>
 
 	<!-- Verify that everything in the global namespace is prefixed.
 	     Plugin-specific, can't live in the shared ruleset. -->

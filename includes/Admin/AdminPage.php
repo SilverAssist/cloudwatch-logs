@@ -10,6 +10,7 @@ namespace SilverAssist\CloudWatchLogs\Admin;
 
 use SilverAssist\CloudWatchLogs\Model\ConnectionStatus;
 use SilverAssist\CloudWatchLogs\Repository\SettingsRepository;
+use SilverAssist\CloudWatchLogs\Core\Plugin;
 use SilverAssist\CloudWatchLogs\Service\ConnectionTester;
 use SilverAssist\CloudWatchLogs\Utils\Helpers;
 use SilverAssist\CloudWatchLogs\View\Admin\LogViewerView;
@@ -150,8 +151,48 @@ class AdminPage implements LoadableInterface {
 				'version'     => SILVER_ASSIST_CLOUDWATCH_VERSION,
 				'tab_title'   => \__( 'CloudWatch Logs', 'silver-assist-cloudwatch-logs' ),
 				'plugin_file' => SILVER_ASSIST_CLOUDWATCH_FILE,
+				'actions'     => $this->get_hub_actions(),
 			]
 		);
+	}
+
+	/**
+	 * Action buttons shown on this plugin's Settings Hub card.
+	 *
+	 * @return array<int, array{label: string, callback: callable, class: string}> The actions.
+	 * @since 1.0.2
+	 */
+	private function get_hub_actions(): array {
+		$actions = [];
+
+		if ( null !== Plugin::instance()->get_updater() ) {
+			$actions[] = [
+				'label'    => \__( 'Check Updates', 'silver-assist-cloudwatch-logs' ),
+				'callback' => [ $this, 'render_check_updates_script' ],
+				'class'    => 'button',
+			];
+		}
+
+		return $actions;
+	}
+
+	/**
+	 * Print the inline script backing the Check Updates button.
+	 *
+	 * The markup comes from wp-github-updater, which builds and escapes it.
+	 *
+	 * @return void
+	 * @since 1.0.2
+	 */
+	public function render_check_updates_script(): void {
+		$updater = Plugin::instance()->get_updater();
+
+		if ( null === $updater ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Inline JavaScript built by wp-github-updater.
+		echo $updater->enqueueCheckUpdatesScript();
 	}
 
 	/**
