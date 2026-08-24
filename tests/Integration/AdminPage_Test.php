@@ -12,6 +12,8 @@ use SilverAssist\CloudWatchLogs\Admin\Ajax\ConnectionAjaxHandler;
 use SilverAssist\CloudWatchLogs\Admin\AssetManager;
 use SilverAssist\CloudWatchLogs\Admin\AdminPage;
 use SilverAssist\CloudWatchLogs\Core\Activator;
+use SilverAssist\CloudWatchLogs\Core\Plugin;
+use SilverAssist\SettingsHub\SettingsHub;
 use SilverAssist\CloudWatchLogs\Model\ConnectionStatus;
 use SilverAssist\CloudWatchLogs\Repository\SettingsRepository;
 use SilverAssist\CloudWatchLogs\Utils\Helpers;
@@ -72,6 +74,44 @@ class AdminPage_Test extends WP_UnitTestCase {
 		$assets->init();
 
 		$this->assertNotFalse( \has_action( 'admin_enqueue_scripts', [ $assets, 'enqueue' ] ) );
+	}
+
+	/**
+	 * The Settings Hub card offers the Check Updates button.
+	 *
+	 * The button is what the other Silver Assist plugins expose, and it only
+	 * appears when the update channel actually initialised — so this also
+	 * catches the updater silently failing to wire itself up.
+	 *
+	 * @return void
+	 */
+	public function test_hub_card_offers_the_check_updates_action(): void {
+		Plugin::instance()->init();
+		AdminPage::instance()->register_with_hub();
+
+		$registered = SettingsHub::get_instance()->get_plugins();
+
+		$this->assertArrayHasKey( AdminPage::PAGE_SLUG, $registered );
+
+		$actions = $registered[ AdminPage::PAGE_SLUG ]['actions'] ?? [];
+		$labels  = \array_column( $actions, 'label' );
+
+		$this->assertContains( 'Check Updates', $labels );
+	}
+
+	/**
+	 * The Check Updates button prints the script that drives it.
+	 *
+	 * @return void
+	 */
+	public function test_check_updates_button_prints_its_script(): void {
+		Plugin::instance()->init();
+
+		\ob_start();
+		AdminPage::instance()->render_check_updates_script();
+		$output = (string) \ob_get_clean();
+
+		$this->assertNotSame( '', $output, 'The button needs its inline script to do anything.' );
 	}
 
 	/**

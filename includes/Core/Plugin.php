@@ -70,7 +70,28 @@ final class Plugin extends AbstractPlugin {
 	 * @since 1.0.0
 	 */
 	protected function init_hooks(): void {
+		\add_filter( 'plugin_action_links_' . SILVER_ASSIST_CLOUDWATCH_BASENAME, [ $this, 'add_settings_link' ] );
+
 		$this->init_updater();
+	}
+
+	/**
+	 * Put a Settings link on the plugin's row in the plugins list.
+	 *
+	 * @param array<int|string, string> $links Existing action links.
+	 * @return array<int|string, string> The links, with Settings first.
+	 * @since 1.0.2
+	 */
+	public function add_settings_link( array $links ): array {
+		$settings_link = \sprintf(
+			'<a href="%s">%s</a>',
+			\esc_url( \admin_url( 'admin.php?page=' . AdminPage::PAGE_SLUG ) ),
+			\esc_html__( 'Settings', 'silver-assist-cloudwatch-logs' )
+		);
+
+		\array_unshift( $links, $settings_link );
+
+		return $links;
 	}
 
 	/**

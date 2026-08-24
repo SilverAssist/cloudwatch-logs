@@ -10,6 +10,7 @@ namespace SilverAssist\CloudWatchLogs\Tests\Integration;
 
 use SilverAssist\CloudWatchLogs\Core\Activator;
 use SilverAssist\CloudWatchLogs\Core\Plugin;
+use SilverAssist\CloudWatchLogs\Admin\AdminPage;
 use SilverAssist\CloudWatchLogs\Core\Updater;
 use SilverAssist\PluginKernel\Interfaces\LoadableInterface;
 use SilverAssist\WpGithubUpdater\Updater as GitHubUpdater;
@@ -60,6 +61,26 @@ class Bootstrap_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( Plugin::class, $plugin );
 		$this->assertInstanceOf( LoadableInterface::class, $plugin );
 		$this->assertSame( $plugin, Plugin::instance() );
+	}
+
+	/**
+	 * The plugins list offers a Settings link next to Deactivate.
+	 *
+	 * @return void
+	 */
+	public function test_plugins_list_offers_a_settings_link(): void {
+		$plugin = Plugin::instance();
+		$plugin->init();
+
+		$this->assertNotFalse(
+			\has_filter( 'plugin_action_links_' . SILVER_ASSIST_CLOUDWATCH_BASENAME, [ $plugin, 'add_settings_link' ] )
+		);
+
+		$links = $plugin->add_settings_link( [ 'deactivate' => '<a href="#">Deactivate</a>' ] );
+
+		$this->assertStringContainsString( 'page=' . AdminPage::PAGE_SLUG, $links[0] );
+		$this->assertStringContainsString( 'Settings', $links[0] );
+		$this->assertCount( 2, $links, 'The existing links must be kept.' );
 	}
 
 	/**
