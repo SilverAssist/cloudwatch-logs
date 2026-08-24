@@ -102,4 +102,41 @@ composer phpunit    # test suite
 
 ## License
 
-PolyForm Noncommercial License 1.0.0 — see [LICENSE](LICENSE).
+This plugin is licensed under the **PolyForm Noncommercial License 1.0.0**.
+
+### Key Points
+
+- ✅ **Free for noncommercial use**: You can use, modify, and distribute this plugin for any noncommercial purpose
+- ✅ **Open source**: Source code is publicly available
+- ❌ **No commercial use**: Commercial use requires a separate commercial license
+- ✅ **Modifications allowed**: You can create and distribute modified versions (noncommercial only)
+- ✅ **Attribution**: Please maintain attribution to Silver Assist
+
+### Full License Text
+
+```text
+PolyForm Noncommercial License 1.0.0
+Copyright (C) 2026 Silver Assist
+
+The licensor grants you a copyright license for the licensed material to do
+everything you might do with the licensed material that would otherwise infringe
+the licensor's copyright in it, for any noncommercial purpose, for the duration
+of the license, and in all territories.
+
+Commercial purposes means use of the licensed material for a purpose intended
+for or directed toward commercial advantage or monetary compensation.
+```
+
+**Full license**: See [LICENSE](LICENSE) file or visit https://polyformproject.org/licenses/noncommercial/1.0.0
+
+### Commercial License
+
+If you need to use this plugin for commercial purposes, please contact Silver Assist for licensing options.
+
+## Credits
+
+Developed by [Silver Assist](http://silverassist.com/)
+
+---
+
+**Made with ❤️ by [Silver Assist](https://silverassist.com)**
