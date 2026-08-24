@@ -3,7 +3,7 @@
  * Plugin Name: Silver Assist CloudWatch Logs
  * Plugin URI: https://github.com/SilverAssist/cloudwatch-logs
  * Description: View, search and follow the events of an Amazon CloudWatch Logs log group from the WordPress admin.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Silver Assist
  * Author URI: https://silverassist.com
  * License: PolyForm-Noncommercial-1.0.0
@@ -20,14 +20,14 @@
  * @author Silver Assist
  * @license PolyForm-Noncommercial-1.0.0
  * @since 1.0.0
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 // Prevent direct access.
 \defined( 'ABSPATH' ) || exit;
 
 // Plugin constants.
-\define( 'SILVER_ASSIST_CLOUDWATCH_VERSION', '1.0.0' );
+\define( 'SILVER_ASSIST_CLOUDWATCH_VERSION', '1.0.1' );
 \define( 'SILVER_ASSIST_CLOUDWATCH_FILE', __FILE__ );
 \define( 'SILVER_ASSIST_CLOUDWATCH_PATH', \plugin_dir_path( __FILE__ ) );
 \define( 'SILVER_ASSIST_CLOUDWATCH_URL', \plugin_dir_url( __FILE__ ) );
@@ -46,7 +46,27 @@ if (
 	$silver_assist_cloudwatch_real_path &&
 	0 === \strpos( $silver_assist_cloudwatch_real_autoload, $silver_assist_cloudwatch_real_path )
 ) {
-	require_once $silver_assist_cloudwatch_real_autoload;
+	$silver_assist_cloudwatch_loader = require $silver_assist_cloudwatch_real_autoload;
+
+	/*
+	 * Composer registers its autoloader with prepend = true, so the last plugin
+	 * to load wins every class name it can supply. That is exactly wrong here.
+	 *
+	 * This plugin bundles the AWS SDK, which drags in Guzzle and PSR-7 — libraries
+	 * the host site very often already loaded, at a different version. PHP resolves
+	 * a class name once and for good, so a prepended loader produces a mixed graph:
+	 * the site's PSR-7 (loaded early, e.g. by a wp-config.php Secrets Manager call)
+	 * combined with this plugin's newer Guzzle, which then calls PSR-7 methods that
+	 * the older copy does not have.
+	 *
+	 * Appending instead means the host's copy of any shared library always wins, so
+	 * whichever versions a site runs stay internally consistent. This plugin's own
+	 * classes are unaffected: nothing else supplies them.
+	 */
+	if ( $silver_assist_cloudwatch_loader instanceof \Composer\Autoload\ClassLoader ) {
+		$silver_assist_cloudwatch_loader->unregister();
+		$silver_assist_cloudwatch_loader->register( false );
+	}
 } else {
 	\add_action(
 		'admin_notices',

@@ -5,6 +5,22 @@ All notable changes to Silver Assist CloudWatch Logs will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-08-24
+
+### Fixed
+
+- **The plugin could not reach AWS on a site that already loads the AWS SDK**,
+  failing with `Call to undefined method GuzzleHttp\Psr7\Utils::redactUriForMessage()`
+  regardless of the credential mode. Composer registers its autoloader ahead of
+  everything already loaded, so this plugin's bundled Guzzle won over the copy
+  the site had, while PSR-7 — already resolved earlier, for instance by a
+  `wp-config.php` Secrets Manager call — stayed on the site's older version. The
+  result was a mixed dependency graph: a newer Guzzle calling PSR-7 methods that
+  the loaded copy did not have. The plugin now appends its autoloader instead of
+  prepending it, so the host's copy of any shared library always wins and each
+  site keeps a consistent set of versions. The plugin's own classes are
+  unaffected, since nothing else supplies them.
+
 ## [1.0.0] - 2026-08-24
 
 First release.

@@ -132,12 +132,9 @@ viewer is the default tab, because reading logs is the point of the
 plugin — except on a site that is not configured yet, where the viewer
 would have nothing to show and the settings tab opens instead.
 
-### 3.1 SDK loading
+### 3.1 SDK loading and the host's dependencies
 
-`SdkLoader` checks `class_exists(\Aws\CloudWatchLogs\CloudWatchLogsClient::class)`
-first and reuses whatever the site already autoloaded; only if absent
-does it require the plugin's own `vendor/autoload.php`. The bundled copy
-is trimmed at install time:
+The plugin bundles the AWS SDK, trimmed at install time:
 
 ```json
 "extra": { "aws/aws-sdk-php": ["CloudWatchLogs", "SecretsManager"] },
@@ -145,16 +142,51 @@ is trimmed at install time:
 ```
 
 `Sts`, `Sso`, `SsoOidc`, `Kms`, `S3` and `Signin` are retained by the
-trimming script itself — they are required by the credential provider
-chain.
+trimming script itself — the credential provider chain needs them.
+`scripts/build-release.sh` copies the whole `--no-dev` vendor tree and
+fails if the trim did not run.
 
-`scripts/build-release.sh` therefore diverges from the version inherited
-from the other plugins, which cherry-picks `vendor/silverassist/*` and
-`vendor/composer/installers`: the AWS SDK drags in Guzzle, PSR-7,
-JMESPath and `aws-crt-php` at runtime, so this plugin copies the whole
-`--no-dev` vendor tree and prunes tests, docs and markdown from it. The
-build then asserts that the CloudWatch Logs and Secrets Manager clients
-survived and that the trimming actually ran (no `src/Ec2` left behind).
+**The plugin appends its Composer autoloader instead of prepending it.**
+This is the single most important line in the bootstrap, and 1.0.0
+shipped without it.
+
+Composer generates `$loader->register(true)` — prepend — so the last
+component to load wins every class name it can supply. For a plugin that
+bundles the AWS SDK, and with it Guzzle and PSR-7, that is exactly wrong.
+PHP resolves a class name once and permanently. On these sites
+`wp-config.php` builds a Secrets Manager client for the database
+credentials before any plugin loads, which pins `GuzzleHttp\Psr7\Utils`
+to the *site's* copy. The plugin then loaded, prepended, and every
+Guzzle class not yet resolved came from the *plugin's* newer copy — which
+calls PSR-7 methods the older loaded copy does not have:
+
+```
+Call to undefined method GuzzleHttp\Psr7\Utils::redactUriForMessage()
+```
+
+Pinning the bundled versions to match cannot fix this, because the fleet
+does not agree with itself. At the time of writing:
+
+| Guzzle / PSR-7 | Sites |
+|---|---|
+| 7.4 / 2.2 | elderlife |
+| 7.10 / 2.x | seven sites |
+| 8.0 / 3.0 | OSA, senioradvice |
+
+Each site updates on its own schedule, so any pinned pair is wrong
+somewhere. Appending sidesteps the problem entirely: the host's copy of
+any shared library always wins, so whatever versions a site runs stay
+internally consistent with each other. The plugin's own classes are
+unaffected — nothing else supplies `SilverAssist\CloudWatchLogs\`.
+
+Verified against all four profiles: the three fleet combinations above,
+and a plain WordPress with no project-level vendor, where the plugin
+supplies the whole graph itself.
+
+The remaining, heavier alternative is scoping the bundled dependencies
+with PHP-Scoper so their class names cannot collide at all. That would
+also let the plugin choose its own SDK version. It is worth revisiting if
+a site ever ships an AWS SDK too old for the calls this plugin makes.
 
 ---
 

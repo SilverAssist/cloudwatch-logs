@@ -63,6 +63,36 @@ class Bootstrap_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * The plugin appends its autoloader rather than prepending it.
+	 *
+	 * Composer's generated bootstrap prepends, which makes this plugin's
+	 * bundled Guzzle and PSR-7 win over the copies a host site already loaded
+	 * and produces a mixed dependency graph. That shipped in 1.0.0 and broke
+	 * every AWS call with an undefined-method fatal.
+	 *
+	 * The real verification is behavioural and needs two Composer autoloaders
+	 * in one request, which a single-vendor test run cannot stage. This guards
+	 * the fix from being silently undone by a future edit to the bootstrap.
+	 *
+	 * @return void
+	 */
+	public function test_bootstrap_appends_its_autoloader(): void {
+		$bootstrap = file_get_contents( dirname( __DIR__, 2 ) . '/silver-assist-cloudwatch-logs.php' );
+
+		$this->assertIsString( $bootstrap );
+		$this->assertStringContainsString(
+			'$silver_assist_cloudwatch_loader->register( false );',
+			$bootstrap,
+			'The Composer autoloader must be appended, so the host site wins for shared libraries.'
+		);
+		$this->assertStringNotContainsString(
+			'register( true )',
+			$bootstrap,
+			'Prepending would let this plugin override the host copies of Guzzle and PSR-7.'
+		);
+	}
+
+	/**
 	 * The update channel actually starts.
 	 *
 	 * The updater is wired behind a class_exists() guard, so a wrong namespace

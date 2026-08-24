@@ -63,6 +63,11 @@ state, so the search, pagination and tail state cannot drift apart.
 
 ## Rules that are easy to get wrong here
 
+- **Never prepend the Composer autoloader.** `silver-assist-cloudwatch-logs.php`
+  appends it with `$loader->register( false )` so the host site's copies of
+  Guzzle and PSR-7 always win. Prepending produces a mixed dependency graph and
+  a fatal on every AWS call — that was the 1.0.0 bug. See
+  `docs/ARCHITECTURE.md` §3.1.
 - **Never cache AWS credentials in the database.** Credentials read from
   Secrets Manager are memoised per request only; a transient would put a
   live secret key into `wp_options` in plaintext.
