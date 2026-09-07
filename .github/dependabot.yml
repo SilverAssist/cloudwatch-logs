@@ -1,5 +1,9 @@
 # Dependabot configuration for automated dependency updates
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Standardized across all SilverAssist WordPress plugins — see paubox-cf7 for
+# the reference copy. Only patch/minor updates are grouped for auto-merge;
+# majors always get their own PR for manual review.
 
 version: 2
 updates:
@@ -20,7 +24,6 @@ updates:
       prefix: "deps"
       prefix-development: "deps"
       include: "scope"
-    # Group minor and patch updates together
     groups:
       composer-minor-patch:
         patterns:
@@ -28,27 +31,17 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    # Critical packages - always create separate PRs for major updates
     ignore:
-      # PHPUnit 10+ incompatible with WordPress Test Suite (WP_UnitTestCase)
-      # WordPress Test Suite requires PHPUnit 9.x
+      # PHPUnit 10+ incompatible with WordPress Test Suite (WP_UnitTestCase);
+      # the test suite still requires PHPUnit 9.x.
       - dependency-name: "phpunit/phpunit"
         update-types: ["version-update:semver-major"]
-      # PHPStan majors change rule behaviour; review before adopting
-      - dependency-name: "phpstan/phpstan"
-        update-types: ["version-update:semver-major"]
-      # AWS SDK ships releases almost daily; minor/patch are grouped weekly
-      # above, majors need a manual review of the CloudWatch Logs API surface
-      - dependency-name: "aws/aws-sdk-php"
-        update-types: ["version-update:semver-major"]
-      # Shared Silver Assist packages - manual review for major updates.
-      # A wp-plugin-kernel major can change the AbstractPlugin contract that
-      # Core\Plugin extends, so it must never land unattended.
-      - dependency-name: "silverassist/wp-plugin-kernel"
-        update-types: ["version-update:semver-major"]
+      # Internal SilverAssist packages — major bumps get manual review.
       - dependency-name: "silverassist/wp-settings-hub"
         update-types: ["version-update:semver-major"]
       - dependency-name: "silverassist/wp-github-updater"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "silverassist/wp-plugin-kernel"
         update-types: ["version-update:semver-major"]
 
   # GitHub Actions dependencies
@@ -67,7 +60,6 @@ updates:
     commit-message:
       prefix: "ci"
       include: "scope"
-    # Group all GitHub Actions updates together
     groups:
       github-actions-updates:
         patterns:
