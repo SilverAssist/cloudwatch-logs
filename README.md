@@ -90,7 +90,7 @@ connection.
 
 ## Composer authentication (private packages)
 
-The SilverAssist packages this plugin uses (`wp-github-updater`, `wp-plugin-kernel`, `wp-settings-hub`, `coding-standards` and `wp-coding-standards`) are installed from their GitHub repositories through Composer `vcs` repositories declared in `composer.json`, not from Packagist.org. Those repositories can require authentication, so configure a token before running `composer install`:
+The SilverAssist packages this plugin uses (`wp-github-updater`, `wp-plugin-kernel`, `wp-settings-hub`, `coding-standards` and `wp-coding-standards`) are installed from their GitHub repositories through Composer `vcs` repositories declared in `composer.json` (with `"no-api": true`, so Composer reads tags with git and does not spend the GitHub API quota of the token), not from Packagist.org. Those repositories can require authentication, so configure a token before running `composer install`:
 
 - **Locally:** `composer config --global github-oauth.github.com <token>`
 - **CI:** store `{"github-oauth":{"github.com":"<token>"}}` as the repository secret `COMPOSER_AUTH`. The workflows already pass it to `composer install`.

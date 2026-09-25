@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Requires `silverassist/wp-github-updater` `^1.4`, which can read the releases of a private GitHub repository with a token (the `SILVER_GITHUB_TOKEN` constant or environment variable). Sites keep updating from a public repository without a token.
-- Declared Composer `vcs` repositories for the SilverAssist packages in `composer.json`, so `composer install` resolves them from GitHub instead of Packagist.org.
+- Declared Composer `vcs` repositories (with `"no-api": true`) for the SilverAssist packages in `composer.json`, so `composer install` resolves them from GitHub instead of Packagist.org. `no-api` makes Composer read tags with git instead of the GitHub API, which otherwise spends about 100 requests of the token's hourly quota per install.
 - The workflows pass the `COMPOSER_AUTH` secret to `composer install` (and `secrets: inherit` to the reusable workflows), because those repositories can require authentication.
 
 ### Documentation
