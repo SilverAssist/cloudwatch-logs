@@ -15,6 +15,7 @@ jobs:
   quality-checks-82:
     name: Quality Checks (PHP 8.2)
     uses: SilverAssist/wp-coding-standards/.github/workflows/quality-checks.yml@v1
+    secrets: inherit
     with:
       php-version: "8.2"
       skip-wp-setup: false
@@ -23,6 +24,7 @@ jobs:
   quality-checks-83:
     name: Quality Checks (PHP 8.3)
     uses: SilverAssist/wp-coding-standards/.github/workflows/quality-checks.yml@v1
+    secrets: inherit
     with:
       php-version: "8.3"
       skip-wp-setup: false
@@ -31,6 +33,7 @@ jobs:
   quality-checks-84:
     name: Quality Checks (PHP 8.4)
     uses: SilverAssist/wp-coding-standards/.github/workflows/quality-checks.yml@v1
+    secrets: inherit
     with:
       php-version: "8.4"
       skip-wp-setup: false
@@ -47,6 +50,8 @@ jobs:
           extensions: mbstring, intl
           coverage: none
       - run: composer install --no-interaction --no-progress --optimize-autoloader
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
       - run: composer audit
 
   compatibility:
@@ -75,6 +80,8 @@ jobs:
           extensions: mbstring, intl, mysql, pdo_mysql
           coverage: none
       - run: composer install --no-interaction --no-progress --optimize-autoloader
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
       - name: Install system dependencies
         run: |
           sudo apt-get update -qq
