@@ -19,11 +19,18 @@
   ],
   "homepage": "http://silverassist.com/",
   "minimum-stability": "stable",
+  "repositories": [
+    { "type": "vcs", "url": "https://github.com/SilverAssist/wp-github-updater", "no-api": true },
+    { "type": "vcs", "url": "https://github.com/SilverAssist/wp-plugin-kernel", "no-api": true },
+    { "type": "vcs", "url": "https://github.com/SilverAssist/wp-settings-hub", "no-api": true },
+    { "type": "vcs", "url": "https://github.com/SilverAssist/coding-standards", "no-api": true },
+    { "type": "vcs", "url": "https://github.com/SilverAssist/wp-coding-standards", "no-api": true }
+  ],
   "require": {
     "php": ">=8.2",
     "aws/aws-sdk-php": "^3.383",
     "composer/installers": "^2.0",
-    "silverassist/wp-github-updater": "^1.3",
+    "silverassist/wp-github-updater": "^1.4",
     "silverassist/wp-plugin-kernel": "^1.0",
     "silverassist/wp-settings-hub": "^1.2"
   },

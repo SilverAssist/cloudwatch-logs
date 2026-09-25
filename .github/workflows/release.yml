@@ -50,6 +50,8 @@ jobs:
 
       - name: Install dependencies
         run: composer install --no-interaction
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }}
 
       - name: Install Node dependencies
         if: hashFiles('package.json') != ''
